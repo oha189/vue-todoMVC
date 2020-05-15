@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/03.css">
+    <script src="./vue开发版本/vue.js"></script>
+</head>
+<body>
+    <h1>代办事项</h1>
+    <div id="main">
+        <!-- 输入框 -->
+        <input type="text" placeholder="What needs to be done?" v-model='val' @keyup.Enter='fabu' />
+        <div id="kaiguan" @click='checkAll' :style='{color:checkAll_panduan()}' v-show="caidan_show()">&gt</div>
+        <!-- 发布栏 -->
+        <ul class="renwu">
+            <li v-for="item,index in arr" @dblclick="xiugai(item)" >
+                <img :src="item.zhuangtai_src" @click="wancheng(index)" v-show="!item.xiugai_show"/>
+                <span :class="{txt_sty:item.fenlei == 'wancheng'}" v-show="!item.xiugai_show">{{item.val}}</span>
+                <a href="javascript:void(0)" @click='shanchu(index)' v-show="!item.xiugai_show">	&Chi;</a>
+                <!-- 修改框 -->
+                <input class="xiugai" type="text"  v-model='xiugai_val' v-show="item.xiugai_show" v-todo-focus @keyup.Enter="xiugai_fabu(item,index)"  @blur="xiugai_fabu(item,index)"/>
+            </li>
+        </ul>
+        <!-- 分类 -->
+        <div id="caidan" v-show="caidan_show()">
+            <span>剩下{{tongji()}}项</span>
+            <p>
+                <a href="javascript:void(0)" id="all" :style="qiehuanArr[0]" @click="qiehuan('all')">All</a>
+                <a href="javascript:void(0)" id="jihuo" :style="qiehuanArr[1]" @click="qiehuan('jihuo')">激活</a>
+                <a href="javascript:void(0)" id="wancheng" :style="qiehuanArr[2]" @click="qiehuan('wancheng')">完成</a>
+            </p>
+            <a href="javascript:void(0)" v-show='wanchengBoole()' id="qingchu" @click="qingChuwancheng">清除已完成</a>
+        </div>
+        <!-- 装饰 -->
+        <div class="caidan-ying-1" v-show="caidan_show()">
+            <div class="caidan-ying-2" v-show="caidan_show()"></div>
+        </div>
+    </div>
+</body>
+<script>
+    
+
+    let vm = new Vue({
+        el:'#main',
+        data:{
+            val:'',
+            arr:[],
+            qiehuanArr:['border:1px solid #EFD5D5;','',''],
+            show:false,
+            checkAll_sty:'',
+            xiugai_val:'',
+        },
+        methods:{
+            // 点击切换页
+            qiehuan:function(id){
+                console.log()
+                // 获取本地存储，转换成数组
+                let localArr = JSON.parse(localStorage.getItem('arr-todo'));
+                // 切换功能键样式
+                switch(id){
+                    case 'all':this.qiehuanArr = ['border:1px solid #EFD5D5;','',''];break;
+                    case 'jihuo':this.qiehuanArr = ['','border:1px solid #EFD5D5;',''];break;
+                    case 'wancheng':this.qiehuanArr = ['','','border:1px solid #EFD5D5;'];break;
+                }
+                // 切换内容
+                if(id != 'all'){
+                    this.arr = [];
+                    for(let i=0;i<localArr.length;i++){
+                        if(localArr[i].fenlei == id){
+                            this.arr.push(localArr[i]);
+                        }
+                    }
+                } else this.arr = localArr;
+            },
+            // 点击事件，切换完成状态
+            wancheng:function(index){
+                let arr = JSON.parse(localStorage.getItem("arr-todo"));
+                if(arr[index].fenlei == 'jihuo'){
+                    arr[index].fenlei = 'wancheng';
+                    arr[index].zhuangtai_src = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E'
+                } else {
+                    arr[index].fenlei = 'jihuo';
+                    arr[index].zhuangtai_src = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E'
+                }
+                this.arr = arr;
+                localStorage.setItem("arr-todo",JSON.stringify(arr));
+            },
+            /*
+                操作本地存储数据
+            */
+            fabu:function (){
+                if(this.val.trim() != ''){
+                    // 获取本地存储
+                    let arr = localStorage.getItem("arr-todo");
+                    // 转换成数组
+                    arr = JSON.parse(arr);
+                    // 若本地存储未定义，则初始化为数组
+                    if(arr == null){
+                        arr = [];
+                    }
+                    // 添加内容
+                    arr.push({
+                        val:this.val,
+                        fenlei:'jihuo',
+                        zhuangtai_src:"data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E",
+                        xiugai_show:false,
+                    });
+                    this.val = '';
+                    // 转换成字符串，并且本地存储
+                    localStorage.setItem('arr-todo',JSON.stringify(arr))
+                    this.arr = arr;
+                }
+            },
+            /*
+                点击删除
+            */
+            shanchu:function(index){
+                // 根据下标删除对应数组元素
+                this.arr.splice(index,1);
+                // 将修改后的数组存储于本地
+                localStorage.setItem('arr-todo',JSON.stringify(this.arr));
+            },
+            /*
+                用于一键全部切换完成
+            */
+            checkAll:function(){
+                let arr = JSON.parse(localStorage.getItem('arr-todo'));
+                for(let i=0;i<arr.length;i++){
+                    arr[i].fenlei = 'wancheng';
+                    arr[i].zhuangtai_src = 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E'
+                }
+                this.arr = arr;
+                localStorage.setItem('arr-todo',JSON.stringify(this.arr));
+            },
+            qingChuwancheng:function(){
+                let arr = JSON.parse(localStorage.getItem('arr-todo'));
+                let g = 0;
+                let arrLength = arr.length;
+                for(let i=0;i<arrLength;i++){
+                    if(arr[i-g].fenlei == 'wancheng'){
+                        arr.splice(i-g,1);
+                        g++;
+                    }
+                }
+                this.arr = arr;
+                localStorage.setItem('arr-todo',JSON.stringify(arr));
+            },
+            /*
+                用于计算并且返回未完成状态的个数
+            */
+            tongji:function(){
+                let arr = JSON.parse(localStorage.getItem('arr-todo'));
+                let sum = 0;
+                for(let i=0;i<arr.length;i++){
+                    if(arr[i].fenlei == 'jihuo') sum++;
+                }
+                return sum
+            },
+            /*
+                判断是否有完成的任务
+            */
+            wanchengBoole:function(){
+                let arr = JSON.parse(localStorage.getItem('arr-todo'));
+                let shifou = false;
+                for(let i=0;i<arr.length;i++){
+                    if(arr[i].fenlei == 'wancheng'){
+                        shifou = true;
+                        break;
+                    }
+                }
+                return shifou
+            },
+            /*
+                控制返回一键切换的样式
+            */
+            checkAll_panduan:function(){
+                return this.tongji() == 0? '#737373':''
+            },
+            /*
+                显示修改模式
+            */ 
+            xiugai:function(item){
+                this.xiugai_val = item.val;
+                item.xiugai_show = true;
+            },
+            xiugai_likai:function(item,index){
+                let arr_todo = JSON.parse(localStorage.getItem('arr-todo'));
+                arr_todo[index].xiugai_show = false;
+                item.xiugai_show = false;
+            },
+            /*
+                修改完成回车确定触发功能
+            */ 
+            xiugai_fabu:function(item,index){
+                let arr_todo = JSON.parse(localStorage.getItem('arr-todo'));
+                // 修改本地存储值
+                arr_todo[index].val = this.xiugai_val;
+                // 修改显示数组值
+                this.arr[index].val = this.xiugai_val;
+                // 隐藏修改框
+                arr_todo[index].xiugai_show = false;
+                item.xiugai_show = false;
+                // 本地保存修改后的值
+                localStorage.setItem('arr-todo',JSON.stringify(arr_todo));
+            },
+            /*
+            
+            */ 
+            caidan_show:function(){
+                let arr = JSON.parse(localStorage.getItem('arr-todo'));
+                if(arr == null) arr = [];
+                return arr.length != 0?true:false
+            },
+            /*
+            
+            */ 
+            renwu_txt_sty:function(item){
+                return item.fenlei == "wancheng"?"line-through":"" 
+            },
+            
+        },
+        
+        // 初始化渲染
+        created:function(){
+            let arr = localStorage.getItem("arr-todo");
+            if(arr != null){
+                arr = JSON.parse(arr);
+            } else {
+                arr = [];
+                localStorage.setItem("arr-todo",'[]');
+            }
+            this.arr = arr;
+            if(this.arr.length != 0) this.show = true;
+        },
+        // 修改框聚焦
+        directives: {
+          "todo-focus": function(el) {
+              el.focus();
+          }
+        }
+
+    })
+    
+    
+</script>
+</html>

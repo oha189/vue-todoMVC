@@ -1,0 +1,140 @@
+body {
+  background: #F5F5F5;
+}
+body h1 {
+  font-size: 80px;
+  color: #EAD7D7;
+  text-align: center;
+  margin: 10px 0;
+  font-weight: 100;
+}
+body #main {
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0px 0px 20px #C9C9C9;
+  position: relative;
+  border: 0.1px solid #C9C9C9;
+}
+body #main input {
+  width: 100%;
+  height: 60px;
+  font-size: 25px;
+  text-indent: 50px;
+  border: 0;
+  /* 去掉点击后的蓝色光边框*/
+  outline: none;
+}
+body #main input::placeholder {
+  color: #E6E6E6;
+  /* 斜体 */
+  font-style: italic;
+}
+body #main #kaiguan {
+  width: 40px;
+  height: 60px;
+  position: absolute;
+  left: 0;
+  text-align: center;
+  line-height: 55px;
+  font-size: 27px;
+  color: #E6E6E6;
+  transform: rotate(90deg);
+}
+body #main .renwu {
+  width: 100%;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body #main .renwu .txt_sty {
+  text-decoration: line-through;
+  color: #d9d9d9;
+}
+body #main .renwu li {
+  padding-left: 50px;
+  padding-right: 30px;
+  border-top: 1px solid #E6E6E6;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+body #main .renwu li img {
+  position: absolute;
+  left: 0;
+}
+body #main .renwu li a {
+  color: #CC9A9A;
+  text-decoration: none;
+}
+body #main .renwu li input {
+  position: absolute;
+  width: 89.8%;
+  height: 49px;
+  text-indent: 0;
+  font-size: 16px;
+  border: 1px solid #999999;
+}
+body #main #caidan {
+  width: 100%;
+  height: 40px;
+  border-top: 1px solid #E6E6E6;
+  background: #fff;
+  line-height: 40px;
+  padding: 0 20px;
+  font-size: 14px;
+  color: #777777;
+}
+body #main #caidan span {
+  width: 140px;
+  float: left;
+}
+body #main #caidan p {
+  margin: 0;
+  display: inline;
+}
+body #main #caidan p a {
+  padding: 3px 7px;
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  margin: 0 10px;
+}
+body #main #caidan p a:hover {
+  border: 1px solid #F7EAEA;
+}
+body #main #caidan #qingchu {
+  float: right;
+}
+body #main #caidan #qingchu:hover {
+  text-decoration: underline;
+}
+body #main #caidan a {
+  text-decoration: none;
+  color: #777777;
+}
+body .caidan-ying-1 {
+  width: 490px;
+  height: 5px;
+  margin: 0 auto;
+  position: absolute;
+  top: 100%;
+  background: #F6F6F6;
+  box-shadow: 0px 0px 20px #C9C9C9;
+  border: 0.1px solid #C9C9C9;
+  display: flex;
+  justify-content: center ;
+}
+body .caidan-ying-2 {
+  width: 480px;
+  height: 5px;
+  margin: 0 auto;
+  position: absolute;
+  top: 100%;
+  background: #F6F6F6;
+  box-shadow: 0px 0px 20px #C9C9C9;
+  border: 0.1px solid #C9C9C9;
+}
